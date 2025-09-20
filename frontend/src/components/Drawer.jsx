@@ -53,7 +53,10 @@ export default function Drawer({ authorization, handleLogout, decoded }) {
                     </>
                     :
                     <>
-
+                        <div className="coins w-12 h-12 ml-4 mb-2">
+                            <img className='-mt-1 rounded-full ' src='/coin.png' alt="Profile" />
+                            <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
+                        </div>
                         <Link to='/profile'>
                             <button
                                 className="cursor-pointer mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"

@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { remove } from '../redux/userSlice'
 import { jwtDecode } from 'jwt-decode'
 import { Toaster } from 'sonner'
+import { isJwtExpired } from '@/utils/utilities'
+
 
 function Navbar() {
     const dispatch = useDispatch()
@@ -13,16 +15,21 @@ function Navbar() {
     const authorization = useSelector((state) => state.user.authorization)
     //console.log(authorization)
 
-    let decoded;
-    if (authorization !== '') {
-        decoded = jwtDecode(authorization)
-        //console.log(decoded)
-    }
-
     const handleLogout = () => {
         dispatch(remove())
         localStorage.removeItem('authorization')
     }
+
+    let decoded;
+    if (authorization !== '') {
+        if (isJwtExpired(authorization)) {
+            handleLogout()
+        }
+        decoded = jwtDecode(authorization)
+        //console.log(decoded)
+    }
+
+
 
     const getLinkClass = (path) => {
         return location.pathname === path
@@ -32,7 +39,7 @@ function Navbar() {
 
 
     return (
-        
+
         <header className='z-20 sticky top-0 w-full flex justify-center bg-gray-200'>
             <nav className="w-full max-w-[1200px] navbar flex sm:flex-row flex-col justify-between items-start sm:items-center text-2xl p-3 h-[70px] text-white font-bold ">
                 <div className=''>
@@ -63,10 +70,13 @@ function Navbar() {
                         </>
                         :
                         <>
+                            <div className="coins w-12 h-12">
+                                <img className='-mt-1 rounded-full ' src='/coin.png'  alt="Profile" />
+                                <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
+                            </div>
                             <Link to='/profile'>
                                 <div className="profile w-12 h-12 ">
                                     <img className='rounded-full border border-black' src={decoded?.picture || '/default-profile.png'} alt="Profile" />
-                                    <p className='w-10 font-extrabold rounded-3xl text-xl text-yellow-200 transform -translate-y-[23px] translate-x-[5px] stroke'>{decoded.coins}</p>
                                 </div>
                             </Link>
                             <button
@@ -85,7 +95,7 @@ function Navbar() {
                     <Drawer authorization={authorization} handleLogout={handleLogout} decoded={decoded} />
                 </div>
             </nav>
-            <Toaster/>
+            <Toaster />
         </header>
     )
 }
