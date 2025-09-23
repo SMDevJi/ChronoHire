@@ -4,6 +4,7 @@ import connectToDB from './db/db.js';
 import authRouter from './routes/auth.js'
 import profileRouter from './routes/profile.js'
 import cloudinaryRouter from './routes/cloudinary.js'
+import interviewRouter from './routes/interview.js'
 import rateLimit from 'express-rate-limit';
 
 import cors from 'cors'
@@ -47,6 +48,7 @@ app.use(cors(corsOptions))
 app.use('/api/auth',authRouter)
 app.use('/api/profile',profileRouter)
 app.use('/api/cloudinary',cloudinaryRouter)
+app.use('/api/interviews',interviewRouter)
 
 
 app.get('/', async (req, res) => {

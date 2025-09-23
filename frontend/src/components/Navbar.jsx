@@ -40,14 +40,14 @@ function Navbar() {
 
     return (
 
-        <header className='z-20 sticky top-0 w-full flex justify-center bg-gray-200'>
-            <nav className="w-full max-w-[1200px] navbar flex sm:flex-row flex-col justify-between items-start sm:items-center text-2xl p-3 h-[70px] text-white font-bold ">
+        <header className='z-20 sticky top-0 w-full flex justify-center bg-black px-10'>
+            <nav className="w-full navbar flex sm:flex-row flex-col justify-between items-start sm:items-center text-2xl p-3 h-[70px] text-white font-bold ">
                 <div className=''>
                     <Link to="/" className='flex items-center gap-2 h-15 w-15'>
                         <img src="/logo.png" alt="Logo" />
                     </Link>
                 </div>
-                <div className='font-bold text-gray-600 links text-sm h-full sm:flex hidden items-center'>
+                <div className='font-bold text-gray-400 links text-sm h-full sm:flex hidden items-center'>
                     <ul className='gap-3 flex'>
                         <li><Link to='/dashboard' className={getLinkClass('/dashboard')}>Dashboard</Link></li>
                         <li><Link to='/purchases' className={getLinkClass('/purchases')}>Purchases</Link></li>

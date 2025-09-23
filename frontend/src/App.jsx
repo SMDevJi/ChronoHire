@@ -13,6 +13,8 @@ import About from './pages/About'
 import Purchases from './pages/Purchases'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import InterViewDetails from './pages/InterViewDetails'
+import ConductInterview from './pages/ConductInterview'
 
 
 
@@ -28,6 +30,8 @@ function App() {
         <Route path='purchases' element=<Purchases /> />
         <Route path='dashboard' element=<Dashboard /> />
         <Route path='profile' element=<Profile /> />
+        <Route path='interview-details/:interviewId' element=<InterViewDetails /> />
+        <Route path='conduct-interview/:interviewId' element=<ConductInterview /> />
         <Route path='*' element=<NotFound /> />
       </Route>
     )
