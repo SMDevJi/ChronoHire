@@ -75,6 +75,7 @@ function Dashboard() {
   const [difficulty, setDifficulty] = useState("");
   const [resume, setResume] = useState(null);
   const [creating, setCreating] = useState(false)
+  const [pastInterviews, setPastInterviews] = useState([])
   const authorization = useSelector((state) => state.user.authorization);
   const navigate = useNavigate()
 
@@ -82,6 +83,12 @@ function Dashboard() {
     setError(null)
     setOpen(o)
   }
+
+
+  const fetchInterviews=()=>{
+
+  }
+
 
   useEffect(() => {
     if (!authorization) {
@@ -198,9 +205,9 @@ function Dashboard() {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" className='cursor-pointer'>Cancel</Button>
               </DialogClose>
-              <Button type="submit" className={creating ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} onClick={handleSubmit} >
+              <Button type="submit" className={`${creating ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} cursor-pointer`} onClick={handleSubmit} >
                 {creating ? <FaSpinner className="animate-spin" /> : ''}
                 {creating ? 'Generating Interview...' : 'Create Interview'}
               </Button>

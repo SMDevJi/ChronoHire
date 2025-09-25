@@ -35,7 +35,7 @@ function Purchases() {
             <p className="text-blue-500 text-lg">Credits: {plan.credits}</p>
             <p className="text-2xl font-semibold text-orange-500">${plan.price}</p>
             <p className="text-gray-600 text-center">{plan.description}</p>
-            <button className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-200">
+            <button className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-200 cursor-pointer">
               Choose Plan
             </button>
           </div>

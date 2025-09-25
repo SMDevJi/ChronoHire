@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 const QuestionSchema = new mongoose.Schema({
   question: { type: String, required: true },
+  suggestedAns: { type: String },
   transcript: { type: String },   // answer will be added later
   aiFeedback: { type: String },
   score: { type: Number }

@@ -80,7 +80,7 @@ function InterViewDetails() {
                     <div className="detail outline-1 rounded p-4 text-yellow-500 bg-yellow-100">
                         <h1 className='text-lg font-bold flex '><MdLightbulbOutline size={28} color="gold" />Information</h1>
                         <h1 className='text-lg font-semibold'>Enable Video Web Cam and Microphone to Start your Al Generated Mock
-                            Interview, It Has 5 question which you can answer and at the last you will
+                            Interview, It Has 7 question which you can answer and at the last you will
                             get the report on the basis of your answer. NOTE: We never record your
                             video, Web cam access you can disable at any time if you want</h1>
                     </div>

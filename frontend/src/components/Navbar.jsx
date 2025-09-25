@@ -70,10 +70,13 @@ function Navbar() {
                         </>
                         :
                         <>
-                            <div className="coins w-12 h-12">
-                                <img className='-mt-1 rounded-full ' src='/coin.png'  alt="Profile" />
-                                <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
-                            </div>
+                            <Link to='/purchases' className='-mt-2'>
+                                <div className="coins w-12 h-12 cursor-pointer">
+                                    <img className='-mt-1 rounded-full ' src='/coin.png' alt="Profile" />
+                                    <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
+                                </div>
+                            </Link>
+
                             <Link to='/profile'>
                                 <div className="profile w-12 h-12 ">
                                     <img className='rounded-full border border-black' src={decoded?.picture || '/default-profile.png'} alt="Profile" />

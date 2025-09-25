@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import InterViewDetails from './pages/InterViewDetails'
 import ConductInterview from './pages/ConductInterview'
+import ShowEvaluation from './pages/ShowEvaluation'
 
 
 
@@ -32,6 +33,7 @@ function App() {
         <Route path='profile' element=<Profile /> />
         <Route path='interview-details/:interviewId' element=<InterViewDetails /> />
         <Route path='conduct-interview/:interviewId' element=<ConductInterview /> />
+        <Route path='show-evaluation/:interviewId' element=<ShowEvaluation /> />
         <Route path='*' element=<NotFound /> />
       </Route>
     )

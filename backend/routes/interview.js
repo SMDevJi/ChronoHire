@@ -1,6 +1,6 @@
 import express from "express";
 import Interview from "../models/Interview.js";
-import { generateAIQuestions, extractResumeText, evaluateAnswers } from "../utils/utils.js";
+import { generateAIQA, extractResumeText, evaluateAnswers } from "../utils/utils.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -47,9 +47,9 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
 
 
         // 2️⃣ Generate 7 AI questions (5 job + 2 resume)
-        const questions = await generateAIQuestions(role, description, resumeText, difficulty, yearsOfExperience);
+        const questions = await generateAIQA(role, description, resumeText, difficulty, yearsOfExperience);
 
-        console.log(questions)
+        //console.log(questions)
 
         // 3️⃣ Create new interview
         const interview = new Interview({
@@ -127,7 +127,8 @@ router.get("/:id", authMiddleware, async (req, res) => {
  * Submit interview attempt (evaluate answers)
  * POST /api/interviews/submit/:id
  */
-router.post("/submit/:id", async (req, res) => {
+router.post("/submit/:id", authMiddleware,async (req, res) => {
+    
     try {
         const { id } = req.params;
         const { answers, duration } = req.body;
@@ -137,23 +138,29 @@ router.post("/submit/:id", async (req, res) => {
             return res.status(404).json({ success: false, message: "Interview not found" });
         }
 
+        if(interview.userId!=req.user.id){
+            return res.status(403).json({ success: false, message: "You are not allowed to submit this interview!" });
+        }
+
         const currentAttempt = interview.lastAttempt;
         if (!currentAttempt) {
             return res.status(400).json({ success: false, message: "No attempt to submit" });
         }
 
+        //console.log(id,answers,duration)
         // Merge answers into questions
         const answeredQuestions = currentAttempt.questions.map(q => {
-            const ans = answers.find(a => a.questionId === q._id.toString());
+            const ans = answers.find(a => a._id == q._id.toString());
             return {
                 ...q.toObject(),
                 transcript: ans?.transcript || ""
             };
         });
 
-        // Evaluate with AI
-        const { evaluatedQuestions, overallEvaluation, overallScore } =
-            await evaluateAnswers(answeredQuestions);
+        //console.log(answeredQuestions)
+        // // Evaluate with AI
+        const { evaluatedQuestions, overallEvaluation, overallScore } = await evaluateAnswers(answeredQuestions);
+        console.log(evaluatedQuestions, overallEvaluation, overallScore)
 
         // Move old evaluated attempt into previousAttempts
         if (currentAttempt.overallEvaluation) {
