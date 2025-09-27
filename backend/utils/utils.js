@@ -92,7 +92,7 @@ export async function extractResumeText(file) {
         const buffer = fs.readFileSync(file)
         const pdf = await getDocumentProxy(new Uint8Array(buffer))
         const { text } = await extractText(pdf, { mergePages: true })
-        console.log(text)
+        //console.log(text)
         return text;
     } else {
         const data = fs.readFileSync(file);

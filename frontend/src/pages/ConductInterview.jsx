@@ -5,13 +5,16 @@ import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { LuWebcam } from 'react-icons/lu'
 import { MdLightbulbOutline } from 'react-icons/md'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import Webcam from 'react-webcam'
 import { HiOutlineSpeakerWave } from "react-icons/hi2";
 import { toast } from 'sonner'
 import useSpeechToText from 'react-hook-speech-to-text';
 import { FaMicrophoneSlash, FaMicrophone } from "react-icons/fa";
+import { setCoins } from '@/redux/userSlice'
+
+
 
 function ConductInterview() {
     const { interviewId } = useParams();
@@ -21,10 +24,10 @@ function ConductInterview() {
     const [interview, setInterview] = useState({});
     const authorization = useSelector((state) => state.user.authorization);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [selectedIdx, setSelectedIdx] = useState(0);
     const [answersArr, setAnswersArr] = useState([]);
     const [userAnswer, setUserAnswer] = useState('');
-    const [shouldCommitAnswer, setShouldCommitAnswer] = useState(false);
     const [disabledBtns, setDisabledBtns] = useState([]);
     const [startTime, setStartTime] = useState(null);
     const [isUserRecording, setIsUserRecording] = useState(false);
@@ -81,9 +84,16 @@ function ConductInterview() {
 
     const handleRecordButtonClick = () => {
         if (isUserRecording) {
-            stopSpeechToText();
-            setShouldCommitAnswer(true);
-            setIsUserRecording(false);
+            // Delay to let last speech result finalize
+            if (userAnswer.trim()) {
+                stopSpeechToText();
+                setIsUserRecording(false);
+
+                setTimeout(() => {
+                    commitAnswerImmediately();
+                }, 400);
+            }
+
         } else {
             setUserAnswer('');
             startSpeechToText();
@@ -91,20 +101,7 @@ function ConductInterview() {
         }
     };
 
-    
-    useEffect(() => {
-        if (results.length === 0) return;
-
-        const lastResult = results[results.length - 1];
-        if (lastResult?.transcript) {
-            setUserAnswer(prev => prev + lastResult.transcript);
-        }
-    }, [results]);
-
-    
-    useEffect(() => {
-        if (!shouldCommitAnswer) return;
-
+    const commitAnswerImmediately = () => {
         setAnswersArr(prevArr => {
             const updated = [...prevArr];
             updated[selectedIdx] = {
@@ -114,13 +111,21 @@ function ConductInterview() {
             return updated;
         });
 
-        setShouldCommitAnswer(false);
         setDisabledBtns(prev => [...new Set([...prev, selectedIdx])]);
         toast.success("Answer recorded successfully!");
-    }, [shouldCommitAnswer]);
+    };
 
-    
     useEffect(() => {
+        if (results.length === 0) return;
+
+        const lastResult = results[results.length - 1];
+        if (lastResult?.transcript) {
+            setUserAnswer(prev => prev + lastResult.transcript);
+        }
+    }, [results]);
+
+    useEffect(() => {
+        console.log(userAnswer, answersArr)
         setUserAnswer('');
     }, [selectedIdx]);
 
@@ -159,6 +164,8 @@ function ConductInterview() {
             );
 
             if (response.data.success) {
+                dispatch(setCoins(response.data.coinBalance))
+                localStorage.setItem('coins',response.data.coinBalance)
                 navigate(`/show-evaluation/${interviewId}`);
             }
         } catch (err) {
@@ -198,13 +205,17 @@ function ConductInterview() {
         <div className='details max-w-5xl lg:max-w-6xl mx-auto p-2 sm:p-5 my-5 h-full min-h-[85vh]'>
             <div className="all grid grid-cols-1 md:grid-cols-2 mt-3 my-6 h-[65vh] w-full">
                 <div className="details flex flex-col outline-1 rounded-md p-4 space-y-8 h-full">
-                    <div className="detail  rounded-xl p-2  space-y-4">
+                    <div className="detail rounded-xl p-2 space-y-4">
                         <div className="qlabels grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1.5 gap-y-3 font-semibold">
                             {interview?.lastAttempt?.questions.map((question, idx) =>
                                 <button key={idx}
                                     disabled={disabledBtns?.includes(idx)}
                                     className={`${disabledBtns.includes(idx) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} outline-1 rounded-xl px-1.5 py-1.5 text-xs sm:text-sm  ${selectedIdx === idx ? 'bg-blue-800 text-white' : ''}`}
-                                    onClick={() => setSelectedIdx(idx)}>
+                                    onClick={() => {
+                                        if (!isRecording && !isUserRecording) {
+                                            setSelectedIdx(idx)
+                                        }
+                                    }}>
                                     Question #{idx + 1}
                                 </button>
                             )}
@@ -238,14 +249,51 @@ function ConductInterview() {
                         <div className="nav-btns mt-5 md:mt-10 mb-8 w-full flex justify-start sm:justify-end flex-wrap gap-2 ">
                             {selectedIdx > 0 && (
                                 <Button className='bg-purple-600 hover:bg-purple-800 cursor-pointer px-3'
-                                    onClick={() => setSelectedIdx(id => id - 1)}>
+                                    onClick={() => {
+                                        const newIndex = selectedIdx - 1;
+
+                                        if (isUserRecording && isRecording) {
+                                            toast.error("Stop recording before navigating.");
+                                            return;
+                                        }
+                                        if (disabledBtns.includes(newIndex)) {
+                                            toast.warning("This question has already been answered.");
+                                            return;
+                                        }
+
+
+                                        setSelectedIdx(id => id - 1);
+
+
+
+                                    }}>
                                     Previous Question
                                 </Button>
                             )}
 
                             {selectedIdx < answersArr.length - 1 ? (
                                 <Button className='bg-purple-600 hover:bg-purple-800 cursor-pointer px-3'
-                                    onClick={() => setSelectedIdx(id => id + 1)}>
+                                    onClick={() => {
+                                        const newIndex = selectedIdx + 1;
+
+                                        if (isUserRecording && isRecording) {
+                                            toast.error("Stop recording before moving to next question.");
+                                            return;
+                                        }
+
+                                        if (disabledBtns.includes(newIndex)) {
+                                            toast.warning("This question has already been answered.");
+                                            return;
+                                        }
+
+
+                                        setSelectedIdx(id => id + 1);
+
+
+                                        console.log(disabledBtns, userAnswer.trim())
+
+
+                                    }}>
                                     Next Question
                                 </Button>
                             ) : (

@@ -18,6 +18,7 @@ function InterViewDetails() {
     const [error, setError] = useState(false)
     const [interview, setInterview] = useState({})
     const authorization = useSelector((state) => state.user.authorization);
+    const coinBalance = useSelector((state) => state.user.coins);
     const navigate = useNavigate()
     const [webcamEnabled, setWebcamEnabled] = useState(false)
 
@@ -76,6 +77,7 @@ function InterViewDetails() {
                         <h1 className='text-lg font-bold'>Job Role/Job Position: <span className='font-normal'>{interview.role}</span></h1>
                         <h1 className='text-lg font-bold'>Job Description/Tech Stack: <span className='font-normal'>{interview.description}</span></h1>
                         <h1 className='text-lg font-bold'>Years of Experience: <span className='font-normal'>{interview.lastAttempt?.yearsOfExperience}</span></h1>
+                        <h1 className='text-lg font-bold'>Cost: <span className='font-normal'>{interview.cost} coins</span></h1>
                     </div>
                     <div className="detail outline-1 rounded p-4 text-yellow-500 bg-yellow-100">
                         <h1 className='text-lg font-bold flex '><MdLightbulbOutline size={28} color="gold" />Information</h1>
@@ -112,7 +114,14 @@ function InterViewDetails() {
                             >
                                 Enable Web Cam and Microphone</Button>
                             <Button className='mt-5 md:mt-15 bg-purple-600 hover:bg-purple-800 w-30 cursor-pointer'
-                                onClick={() => navigate(`/conduct-interview/${interviewId}`)}
+                                onClick={() => {
+                                    if(Number(coinBalance)<interview.cost){
+                                        toast.error('Not enough balance, Please purchase coins!')
+                                    }else{
+                                        navigate(`/conduct-interview/${interviewId}`)
+                                    }
+                                }
+                            }
                             >
                                 Start Interview
                             </Button>

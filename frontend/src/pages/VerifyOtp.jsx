@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { add } from '../redux/userSlice';
+import { add, setCoins } from '../redux/userSlice';
 import { toast } from 'sonner'
 
 
@@ -46,7 +46,7 @@ const VerifyOtp = () => {
 
     const formatTime = (value) => value.toString().padStart(2, '0');
 
-    
+
     const verifyRequest = (otp) => {
         const options = {
             method: 'POST',
@@ -66,6 +66,11 @@ const VerifyOtp = () => {
                 } else {
                     localStorage.setItem('authorization', response.data.authorization);
                     dispatch(add(response.data.authorization));
+
+                    const decoded = jwtDecode(response.data.authorization)
+                    localStorage.setItem('coins', decoded.coins)
+                    dispatch(setCoins(decoded.coins))
+
                     toast.success('Account verified successfully!')
                     toast.success('Logged in successfully!')
                     navigate('/dashboard');
@@ -87,7 +92,7 @@ const VerifyOtp = () => {
             data: { email: email }
         };
 
-        if(minutes!=0 || seconds!=0){
+        if (minutes != 0 || seconds != 0) {
             return
         }
         setResending(true)
@@ -103,7 +108,7 @@ const VerifyOtp = () => {
         }).catch(function (error) {
             setLoginErr(error.response?.data?.message || error.message);
             toast.error('Failed to resend OTP!')
-        }).finally(()=>
+        }).finally(() =>
             setResending(false)
         );
     }
@@ -153,9 +158,9 @@ const VerifyOtp = () => {
                 <div className="flex w-full justify-between text-center text-sm text-gray-600">
 
                     Resend OTP in: {formatTime(minutes)}:{formatTime(seconds)}
-                    <span onClick={resendOtp} className={`font-semibold  ${resending?'text-gray-400 hover:text-gray-400':'hover:text-gray-800'} ml-2 cursor-pointer`}>
-                        {resending?'Resending code...':'Resend code'}
-                        </span>
+                    <span onClick={resendOtp} className={`font-semibold  ${resending ? 'text-gray-400 hover:text-gray-400' : 'hover:text-gray-800'} ml-2 cursor-pointer`}>
+                        {resending ? 'Resending code...' : 'Resend code'}
+                    </span>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import Drawer from './Drawer'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { remove } from '../redux/userSlice'
+import { remove, setCoins } from '../redux/userSlice'
 import { jwtDecode } from 'jwt-decode'
 import { Toaster } from 'sonner'
 import { isJwtExpired } from '@/utils/utilities'
@@ -13,6 +13,7 @@ function Navbar() {
     const dispatch = useDispatch()
     const location = useLocation()
     const authorization = useSelector((state) => state.user.authorization)
+    const coinBalance = useSelector((state) => state.user.coins)
     //console.log(authorization)
 
     const handleLogout = () => {
@@ -26,8 +27,10 @@ function Navbar() {
             handleLogout()
         }
         decoded = jwtDecode(authorization)
+        
         //console.log(decoded)
     }
+
 
 
 
@@ -70,10 +73,10 @@ function Navbar() {
                         </>
                         :
                         <>
-                            <Link to='/purchases' className='-mt-2'>
-                                <div className="coins w-12 h-12 cursor-pointer">
-                                    <img className='-mt-1 rounded-full ' src='/coin.png' alt="Profile" />
-                                    <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
+                            <Link to='/purchases' className='mr-2'>
+                                <div className="coins w-10 h-12 cursor-pointer flex flex-col justify-center items-center">
+                                    <img className=' rounded-full w-6 h-6 border-1' src='/coin.png' alt="Profile" />
+                                    <p className='text-yellow-300 stroke text-lg leading-none'>{coinBalance}</p>
                                 </div>
                             </Link>
 
@@ -95,7 +98,7 @@ function Navbar() {
 
                 </div>
                 <div className=" small-dd sm:hidden block">
-                    <Drawer authorization={authorization} handleLogout={handleLogout} decoded={decoded} />
+                    <Drawer authorization={authorization} handleLogout={handleLogout} decoded={decoded} coinBalance={coinBalance}/>
                 </div>
             </nav>
             <Toaster />

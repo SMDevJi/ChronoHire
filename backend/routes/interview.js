@@ -1,13 +1,17 @@
 import express from "express";
 import Interview from "../models/Interview.js";
+import User from "../models/User.js";
 import { generateAIQA, extractResumeText, evaluateAnswers } from "../utils/utils.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import fsp from "fs/promises";
 import authMiddleware from "../middleware/middleware.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
+const INTERVIEW_COST = process.env.INTERVIEW_COST
 
 // Setup multer for file upload
 const storage = multer.diskStorage({
@@ -36,7 +40,7 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
     try {
         const { role, description, yearsOfExperience, difficulty } = req.body;
         const userId = req.user.id
-        console.log(userId, role, description, yearsOfExperience, difficulty)
+        //console.log(userId, role, description, yearsOfExperience, difficulty)
         const resumeFile = req.file;
 
 
@@ -78,8 +82,18 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
             questions: interview.lastAttempt.questions
         });
 
+        await fsp.unlink(resumeFile.path);
+
     } catch (error) {
         console.error("Error creating interview:", error);
+        //delete resume file
+        if (req.file && req.file.path) {
+            try {
+                await fsp.unlink(req.file.path);
+            } catch (err) {
+                console.error("Failed to delete resume file after error:", err);
+            }
+        }
         res.status(500).json({ success: false, message: "Internal Server error" });
     }
 });
@@ -87,37 +101,39 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
 
 
 
-/**
- * Get interview details
- * GET /api/interviews/:id
- */
-router.get("/:id", authMiddleware, async (req, res) => {
+// GET all interviews of a user (summary)
+//api/interviews/get-user
+router.get("/get-user", authMiddleware, async (req, res) => {
+    console.log("first")
     try {
-        const { id } = req.params;
-        const interview = await Interview.findById(id);
+        console.log(req.user.id)
+        const userId = req.user.id;
 
-        if (!interview) {
-            return res.status(404).json({ success: false, message: "Interview not found" });
-        }
+        // Fetch only the fields we need
+        const interviews = await Interview.find({ userId })
+            .select("role description createdAt lastAttempt.yearsOfExperience")
+            .sort({ createdAt: -1 }); // latest first
 
-        if (interview.userId != req.user.id) {
-            return res.status(403).json({ success: false, message: "You are not allowed to get details of this interview!" });
-        }
+        const formatted = interviews.map(interview => ({
+            id: interview._id,
+            role: interview.role,
+            description: interview.description,
+            yearsOfExperience: interview.lastAttempt?.yearsOfExperience || null,
+            createdAt: interview.createdAt
+        }));
 
-        res.status(200).json({
-            success: true,
-            interview: {
-                role: interview.role,
-                description: interview.description,
-                lastAttempt: interview.lastAttempt,
-                previousAttempts: interview.previousAttempts
-            }
-        });
+        res.status(200).json({ success: true, interviews: formatted });
+
     } catch (error) {
-        console.error("Error fetching interview:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.error("Error fetching user interviews:", error);
+        res.status(500).json({ success: false, message: "Internal Server error lol." });
     }
 });
+
+
+
+
+
 
 
 
@@ -127,18 +143,29 @@ router.get("/:id", authMiddleware, async (req, res) => {
  * Submit interview attempt (evaluate answers)
  * POST /api/interviews/submit/:id
  */
-router.post("/submit/:id", authMiddleware,async (req, res) => {
-    
+router.post("/submit/:id", authMiddleware, async (req, res) => {
+
     try {
         const { id } = req.params;
         const { answers, duration } = req.body;
+
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Prevent negative coins
+        if (user.coins < 10) {
+            return res.status(400).json({ success: false, message: "Not enough coins" });
+        }
+
 
         const interview = await Interview.findById(id);
         if (!interview) {
             return res.status(404).json({ success: false, message: "Interview not found" });
         }
 
-        if(interview.userId!=req.user.id){
+        if (interview.userId != req.user.id) {
             return res.status(403).json({ success: false, message: "You are not allowed to submit this interview!" });
         }
 
@@ -179,15 +206,19 @@ router.post("/submit/:id", authMiddleware,async (req, res) => {
 
         await interview.save();
 
+        user.coins -= INTERVIEW_COST;
+        await user.save();
+
         res.status(200).json({
             success: true,
             message: "Interview submitted and evaluated successfully",
+            coinBalance: user.coins,
             evaluation: interview.lastAttempt
         });
 
     } catch (error) {
         console.error("Error submitting interview:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+        res.status(500).json({ success: false, message: "Internal Server error" });
     }
 });
 
@@ -199,31 +230,47 @@ router.post("/submit/:id", authMiddleware,async (req, res) => {
  * Reattempt interview
  * POST /api/interviews/reattempt/:id
  */
-router.post("/reattempt/:id", async (req, res) => {
+router.post("/reattempt/:id", upload.single("resumeFile"), authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
-        const { difficulty, yearsOfExperience, resumeFile } = req.body;
+        const { difficulty, yearsOfExperience } = req.body;
+        const resumeFile = req.file;
+
+        console.log(difficulty, yearsOfExperience)
+        if (resumeFile) {
+            console.log(resumeFile)
+        }
+
+
+        if (!difficulty || !yearsOfExperience) {
+            return res.status(400).json({ success: false, message: "Please provide all details!" });
+        }
 
         const interview = await Interview.findById(id);
         if (!interview) {
             return res.status(404).json({ success: false, message: "Interview not found" });
         }
 
-        // If last attempt exists, move to previousAttempts
-        if (interview.lastAttempt) {
-            interview.previousAttempts.push(interview.lastAttempt);
+
+
+        // If last attempt exists, move to previousAttempts (excluding questions)
+        if (interview.lastAttempt.overallEvaluation) {
+            const previousAttempt = { ...interview.lastAttempt.toObject() };
+            delete previousAttempt.questions;
+            interview.previousAttempts.push(previousAttempt);
         }
 
         // Update resume if new one provided
         let resumeText = interview.resumeText;
         if (resumeFile) {
-            resumeText = await extractResumeText(resumeFile);
+            resumeText = await extractResumeText(resumeFile.path);
             interview.resumeText = resumeText;
             interview.resumeUpdatedAt = new Date();
         }
 
         // Generate new questions
-        const questions = await generateAIQuestions(interview.role, interview.description, resumeText);
+        const questions = await generateAIQA(interview.role, interview.description, resumeText, difficulty, yearsOfExperience);
+
 
         // New attempt
         interview.lastAttempt = {
@@ -242,14 +289,76 @@ router.post("/reattempt/:id", async (req, res) => {
             success: true,
             message: "New attempt created successfully",
             interviewId: interview._id,
-            newAttemptId: interview.lastAttempt._id,
-            questions: interview.lastAttempt.questions
+            newAttemptId: interview.lastAttempt._id
         });
 
+        await fsp.unlink(resumeFile.path);
+
     } catch (error) {
-        console.error("Error reattempting interview:", error);
-        res.status(500).json({ success: false, message: "Server error" });
+        console.error("Error creating reattempt.", error);
+        if (req.file && req.file.path) {
+            try {
+                await fsp.unlink(req.file.path);
+            } catch (err) {
+                console.error("Failed to delete resume file after error:", err);
+            }
+        }
+        res.status(500).json({ success: false, message: "Internal Server error" });
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Get interview details
+ * GET /api/interviews/:id
+ */
+router.get("/:id", authMiddleware, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const interview = await Interview.findById(id);
+
+        if (!interview) {
+            return res.status(404).json({ success: false, message: "Interview not found" });
+        }
+
+        if (interview.userId != req.user.id) {
+            return res.status(403).json({ success: false, message: "You are not allowed to get details of this interview!" });
+        }
+
+        res.status(200).json({
+            success: true,
+            interview: {
+                role: interview.role,
+                description: interview.description,
+                cost: INTERVIEW_COST,
+                lastAttempt: interview.lastAttempt,
+                previousAttempts: interview.previousAttempts
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching interview:", error);
+        res.status(500).json({ success: false, message: "Internal Server error" });
+    }
+});
+
+
+
+
+
+
+
+
 
 export default router;

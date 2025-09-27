@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    authorization: ''
+    authorization: '',
+    coins:0
 }
 
 const userSlice = createSlice({
@@ -13,10 +14,13 @@ const userSlice = createSlice({
         },
         remove: (state, action) => {
             state.authorization = ''
+        },
+        setCoins: (state, action) => {
+            state.coins = action.payload
         }
     }
 })
 
-export const { add, remove } = userSlice.actions
+export const { add, remove,setCoins } = userSlice.actions
 
 export default userSlice.reducer

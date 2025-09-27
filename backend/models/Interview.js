@@ -36,6 +36,6 @@ const InterviewSchema = new mongoose.Schema({
   resumeUpdatedAt: { type: Date, default: Date.now },
   lastAttempt: { type: AttemptSchema, _id: true },
   previousAttempts: [AttemptSchema]
-});
+},{ timestamps: true });
 
 export default mongoose.model("Interview", InterviewSchema);

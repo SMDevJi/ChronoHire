@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import DropOn from '../assets/dropdown-on.svg'; // Your SVG icon
 import { Link, useLocation } from 'react-router-dom';
 
-export default function Drawer({ authorization, handleLogout, decoded }) {
+export default function Drawer({ authorization, handleLogout, decoded, coinBalance }) {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation()
 
@@ -53,9 +53,9 @@ export default function Drawer({ authorization, handleLogout, decoded }) {
                     </>
                     :
                     <>
-                        <div className="coins w-12 h-12 ml-4 mb-2">
-                            <img className='-mt-1 rounded-full ' src='/coin.png' alt="Profile" />
-                            <p className='text-yellow-300 stroke text-lg -mt-5 ml-2'>{decoded.coins}</p>
+                        <div className="coins w-10 h-12 cursor-pointer flex flex-col justify-center items-center ml-4">
+                            <img className=' rounded-full w-6 h-6 border-1' src='/coin.png' alt="Profile" />
+                            <p className='text-yellow-300 stroke text-lg leading-none'>{coinBalance}</p>
                         </div>
                         <Link to='/profile'>
                             <button

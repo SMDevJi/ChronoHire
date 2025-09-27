@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { add } from '../redux/userSlice';
+import { add, setCoins } from '../redux/userSlice';
 import { toast } from 'sonner'
 
 const Login = () => {
@@ -34,6 +34,11 @@ const Login = () => {
                 else {
                     localStorage.setItem('authorization', response.data.authorization);
                     dispatch(add(response.data.authorization));
+
+                    const decoded=jwtDecode(response.data.authorization)
+                    localStorage.setItem('coins', decoded.coins)
+                    dispatch(setCoins(decoded.coins))
+
                     toast.success('Login successful!')
                     navigate('/dashboard');
                 }
@@ -43,7 +48,7 @@ const Login = () => {
                 if (error.response.status == 403) {
                     toast.error("Please verify OTP first!")
                     navigate(`/verify-otp/?validity=${error.response.data.otpValidMins}&email=${email}`);
-                }else{
+                } else {
                     toast.error('Login failed!')
                 }
             }).finally(() =>
@@ -92,8 +97,8 @@ const Login = () => {
 
                     <div>
                         <button type="submit" className={`w-full px-4 py-2 ${requesting ? 'bg-gray-600 hover:bg-gray-600' : 'bg-black hover:bg-gray-800'} text-white rounded-lg `}>
-                            {requesting?'Logging in...':'Login'}
-                            </button>
+                            {requesting ? 'Logging in...' : 'Login'}
+                        </button>
                     </div>
                 </form>
 
