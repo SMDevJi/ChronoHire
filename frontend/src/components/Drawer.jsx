@@ -16,7 +16,7 @@ export default function Drawer({ authorization, handleLogout, decoded, coinBalan
         <div>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed top-4 right-4 z-50 p-2"
+                className="fixed top-4 right-4 z-50 "
             >
                 <img
                     src={DropOn}

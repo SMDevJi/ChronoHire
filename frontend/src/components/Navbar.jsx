@@ -43,8 +43,8 @@ function Navbar() {
 
     return (
 
-        <header className='z-20 sticky top-0 w-full flex justify-center bg-black px-10'>
-            <nav className="w-full navbar flex sm:flex-row flex-col justify-between items-start sm:items-center text-2xl p-3 h-[70px] text-white font-bold ">
+        <header className='z-20 sticky top-0 w-full flex justify-center bg-black px-5 sm:px-10'>
+            <nav className="w-full navbar flex sm:flex-row flex-col justify-between items-start sm:items-center text-2xl py-3 h-[70px] text-white font-bold ">
                 <div className=''>
                     <Link to="/" className='flex items-center gap-2 h-15 w-15'>
                         <img src="/logo.png" alt="Logo" />

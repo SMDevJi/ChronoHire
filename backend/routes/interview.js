@@ -82,7 +82,10 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
             questions: interview.lastAttempt.questions
         });
 
-        await fsp.unlink(resumeFile.path);
+        if(resumeFile){
+            await fsp.unlink(resumeFile.path);
+        }
+        
 
     } catch (error) {
         console.error("Error creating interview:", error);
@@ -292,7 +295,10 @@ router.post("/reattempt/:id", upload.single("resumeFile"), authMiddleware, async
             newAttemptId: interview.lastAttempt._id
         });
 
-        await fsp.unlink(resumeFile.path);
+        if(resumeFile){
+            await fsp.unlink(resumeFile.path);
+        }
+        
 
     } catch (error) {
         console.error("Error creating reattempt.", error);
