@@ -58,7 +58,22 @@ npm install
 ```
 Create a `.env` file inside `/backend` with:
 ```env
+API_PORT=3000
+FRONTEND_URL=http://localhost:5173
+MONGODB_URL=mongodb://localhost:27017/ChronoHire
+JWT_SECRET='test@123'
+JWT_EXPIRESIN='30m'
+EMAIL=abcxyz@gmail.com
+APP_PASSWORD=abcdef
 
+CLOUDINARY_CLOUD_NAME=abcdef
+CLOUDINARY_API_KEY=123456
+CLOUDINARY_API_SECRET=abcdef
+GEMINI_API_KEY=abcdef
+
+INTERVIEW_COST=10
+
+STRIPE_SECRET_KEY=sk_test_abcd...
 ```
 Run backend:
 ```bash
@@ -70,6 +85,14 @@ node index.js
 cd frontend
 npm install
 npm run dev
+```
+
+Create a `.env` file inside `/frontend` with:
+```env
+VITE_BACKEND_URL=http://localhost:3000
+VITE_CLOUDINARY_UPLOAD_PRESET=Demo
+VITE_CLOUDINARY_CLOUD_NAME=abcdef
+VITE_CLOUDINARY_API_KEY=12345678
 ```
 
 Frontend runs on `http://localhost:5173`  
