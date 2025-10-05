@@ -81,7 +81,7 @@ function ConductInterview() {
     }
   };
 
-  const handleRecordButtonClick = () => {
+  const handleRecordButtonClick = async() => {
     if (!browserSupportsSpeechRecognition) {
       toast.error("Speech recognition not supported in this browser!");
       return;
@@ -98,6 +98,7 @@ function ConductInterview() {
       }, 400);
     } else {
       // Start Recording
+      await navigator.mediaDevices.getUserMedia({ audio: true });
       resetTranscript();
       setUserAnswer('');
       setIsUserRecording(true);
