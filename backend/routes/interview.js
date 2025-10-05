@@ -107,9 +107,9 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
 // GET all interviews of a user (summary)
 //api/interviews/get-user
 router.get("/get-user", authMiddleware, async (req, res) => {
-    console.log("first")
+    //console.log("first")
     try {
-        console.log(req.user.id)
+        //console.log(req.user.id)
         const userId = req.user.id;
 
         // Fetch only the fields we need

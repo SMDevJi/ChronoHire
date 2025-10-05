@@ -16,6 +16,8 @@ import Profile from './pages/Profile'
 import InterViewDetails from './pages/InterViewDetails'
 import ConductInterview from './pages/ConductInterview'
 import ShowEvaluation from './pages/ShowEvaluation'
+import PaymentCancelled from './pages/PaymentCancelled'
+import PaymentSuccess from './pages/PaymentSuccess'
 
 
 
@@ -34,6 +36,8 @@ function App() {
         <Route path='interview-details/:interviewId' element=<InterViewDetails /> />
         <Route path='conduct-interview/:interviewId' element=<ConductInterview /> />
         <Route path='show-evaluation/:interviewId' element=<ShowEvaluation /> />
+        <Route path='payment-cancelled' element=<PaymentCancelled /> />
+        <Route path='payment-success' element=<PaymentSuccess /> />
         <Route path='*' element=<NotFound /> />
       </Route>
     )
