@@ -258,8 +258,8 @@ function ShowEvaluation() {
                                                                 interview.lastAttempt?.overallEvaluation?.contentRelevance.offTopic
                                                             ],
                                                             backgroundColor: [
-                                                                'rgb(255, 99, 132)',
-                                                                'rgb(255, 205, 86)'
+                                                                'rgb(50, 168, 82)',
+                                                                'rgb(255, 99, 132)'
                                                             ],
                                                             hoverOffset: 4
                                                         }]
@@ -280,9 +280,9 @@ function ShowEvaluation() {
                                                                 interview.lastAttempt?.overallEvaluation?.grammarVocabulary.majorErrors
                                                             ],
                                                             backgroundColor: [
-                                                                'rgb(255, 99, 132)',
+                                                                'rgb(50, 168, 82)',
                                                                 'rgb(255, 205, 86)',
-                                                                'rgb(50, 168, 82)'
+                                                                'rgb(255, 99, 132)'
                                                             ],
                                                             hoverOffset: 4
                                                         }]
@@ -302,9 +302,9 @@ function ShowEvaluation() {
                                                                 interview.lastAttempt?.overallEvaluation?.answerCompleteness.missed
                                                             ],
                                                             backgroundColor: [
-                                                                'rgb(255, 99, 132)',
+                                                                'rgb(50, 168, 82)',
                                                                 'rgb(255, 205, 86)',
-                                                                'rgb(50, 168, 82)'
+                                                                'rgb(255, 99, 132)'
                                                             ],
                                                             hoverOffset: 4
                                                         }]
