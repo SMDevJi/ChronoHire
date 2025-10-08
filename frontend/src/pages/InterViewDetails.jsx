@@ -9,7 +9,21 @@ import { MdLightbulbOutline } from "react-icons/md";
 import Webcam from "react-webcam";
 import { LuWebcam } from "react-icons/lu";
 import { Button } from '@/components/ui/button'
+import Bowser from 'bowser';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
+function detectBrowser() {
+    
+    try {
+        if (window.navigator.brave.isBrave()) {
+            return 'Brave'
+        }
+    } catch (error) {
+        const browser = Bowser.getParser(window.navigator.userAgent);
+        const browserName = browser.getBrowserName();
+        return browserName;
+    }
+}
 
 
 function InterViewDetails() {
@@ -21,7 +35,9 @@ function InterViewDetails() {
     const coinBalance = useSelector((state) => state.user.coins);
     const navigate = useNavigate()
     const [webcamEnabled, setWebcamEnabled] = useState(false)
-
+    const [browserSupported, setBrowserSupported] = useState(true)
+    const { browserSupportsSpeechRecognition } = useSpeechRecognition();
+    
     const loadInterview = async () => {
         try {
             setLoading(true)
@@ -51,7 +67,15 @@ function InterViewDetails() {
 
 
     useEffect(() => {
-        loadInterview()
+        const browser = detectBrowser()
+        console.log(browser)
+        
+        if (!browserSupportsSpeechRecognition || browser.toLocaleLowerCase().includes('brave') || browser.toLocaleLowerCase().includes('firefox')) {
+            setBrowserSupported(false)
+        } else {
+            loadInterview()
+        }
+
     }, [authorization, navigate, interviewId]);
 
     if (error) {
@@ -67,6 +91,12 @@ function InterViewDetails() {
         </div>
     }
 
+
+    if (!browserSupported) {
+        return <div className='wrapper min-h-[80vh] px-4'>
+            <Error text='This browser does not support Web Speech API. Please use a supported browser (Eg. Google Chrome, Microsoft Edge etc). ' />
+        </div>
+    }
 
     return (
         <div className='details max-w-5xl lg:max-w-6xl mx-auto p-6 my-5'>
@@ -115,13 +145,13 @@ function InterViewDetails() {
                                 Enable Web Cam and Microphone</Button>
                             <Button className='mt-5 md:mt-15 bg-purple-600 hover:bg-purple-800 w-30 cursor-pointer'
                                 onClick={() => {
-                                    if(Number(coinBalance)<interview.cost){
+                                    if (Number(coinBalance) < interview.cost) {
                                         toast.error('Not enough balance, Please purchase coins!')
-                                    }else{
+                                    } else {
                                         navigate(`/conduct-interview/${interviewId}`)
                                     }
                                 }
-                            }
+                                }
                             >
                                 Start Interview
                             </Button>
