@@ -82,7 +82,7 @@ function Navbar() {
 
                             <Link to='/profile'>
                                 <div className="profile w-12 h-12 ">
-                                    <img className='rounded-full border border-black' src={decoded?.picture || '/default-profile.png'} alt="Profile" />
+                                    <img className='rounded-full border border-black max-h-full' src={decoded?.picture || '/default-profile.png'} alt="Profile" />
                                 </div>
                             </Link>
                             <button
