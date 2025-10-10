@@ -28,6 +28,7 @@ const Signup = () => {
         };
         setLoading(true)
         axios.request(options).then(function (response) {
+            console.log(response.data)
             if (!response.data.success) {
                 setRegisterErr(response.data.message);
                 toast.error('Registration failed!')
@@ -45,13 +46,16 @@ const Signup = () => {
                 toast.error('Registration failed!')
             }
             console.error(error.message);
-        }.finally(() =>
+        }).finally(() =>
             setLoading(false)
-        ));
+        );
     };
 
     const handleSignUp = (e) => {
         e.preventDefault();
+        if(loading){
+            return
+        }
         if (password != cPassword) {
             setRegisterErr("Confirm password does not match!")
             return

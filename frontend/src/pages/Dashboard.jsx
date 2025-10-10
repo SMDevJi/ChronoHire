@@ -51,6 +51,7 @@ function Dashboard() {
   const [pastInterviews, setPastInterviews] = useState([])
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedInterview, setSelectedInterview] = useState(null);
+  const [timer, setTimer] = useState(0);
 
   const authorization = useSelector((state) => state.user.authorization);
   const navigate = useNavigate()
@@ -115,6 +116,7 @@ function Dashboard() {
     }
     console.log(difficulty)
 
+    let timerInterval;
     try {
       const formData = new FormData();
       formData.append("role", role);
@@ -124,6 +126,13 @@ function Dashboard() {
       formData.append("resumeFile", resume);
 
       setCreating(true)
+
+      setTimer(1);
+      timerInterval = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
+      toast.info('It can take upto 1 minute to generate interview!')
+      
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/interviews/create`, formData, {
         headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${authorization}` }
       }).finally(() =>
@@ -141,6 +150,8 @@ function Dashboard() {
       console.log("Interview created:", res.data);
     } catch (err) {
       console.error("Error creating interview:", err.response?.data || err.message);
+    } finally {
+      clearInterval(timerInterval)
     }
   };
 
@@ -157,6 +168,8 @@ function Dashboard() {
     }
     console.log("works...")
     //return
+
+    let timerInterval;
     try {
       console.log("first")
       const formData = new FormData();
@@ -176,6 +189,13 @@ function Dashboard() {
 
 
       setCreating2(true)
+
+      setTimer(1);
+      timerInterval = setInterval(() => {
+        setTimer((prev) => prev + 1);
+      }, 1000);
+      toast.info('It can take upto 1 minute to generate interview!')
+      
       const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/interviews/reattempt/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data", "Authorization": `Bearer ${authorization}` }
       }).finally(() =>
@@ -193,6 +213,8 @@ function Dashboard() {
       console.log("Reattempt created:", res.data);
     } catch (err) {
       console.error("Error creating reattempt:", err.response?.data || err.message);
+    } finally{
+      clearInterval(timerInterval)
     }
   }
 
@@ -267,7 +289,7 @@ function Dashboard() {
               </DialogClose>
               <Button type="submit" className={`${creating ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} cursor-pointer`} onClick={handleSubmit} >
                 {creating ? <FaSpinner className="animate-spin" /> : ''}
-                {creating ? 'Generating Interview...' : 'Create Interview'}
+                {creating ? `Generating Interview... (${timer}s)` : 'Create Interview'}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -409,7 +431,7 @@ function Dashboard() {
                       className={`${creating2 ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} text-white`}
                     >
                       {creating2 ? <FaSpinner className="animate-spin mr-2" /> : ''}
-                      {creating2 ? 'Generating Interview...' : 'Update Interview'}
+                      {creating2 ? `Generating Interview... (${timer}s)` : 'Update Interview'}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
