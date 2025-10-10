@@ -18,6 +18,16 @@ It also supports **resume-based question generation** and **candidate performanc
 - 🌐 **Responsive UI** with React + TailwindCSS, ShadCN.  
 
 ---
+## ✨ Demo
+- Conducting Interview
+
+https://github.com/user-attachments/assets/6b76ed16-f475-467d-b24b-607b72c2198c
+
+- Analytics With Graph and Charts
+
+https://github.com/user-attachments/assets/aaa5266d-a79a-4f40-b02f-3524e67bf8af
+
+---
 
 ## 🛠️ Tech Stack
 
