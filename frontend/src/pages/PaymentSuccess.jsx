@@ -12,7 +12,7 @@ function PaymentSuccess() {
     const dispatch = useDispatch();
     const prevCoins = useSelector((state) => state.user.coins);
 
-    const [loading, setLoading] = useState(true);
+    //const [loading, setLoading] = useState(true);
     const [countdown, setCountdown] = useState(5);
 
     const query = new URLSearchParams(location.search);
@@ -39,7 +39,7 @@ function PaymentSuccess() {
             });
         }, 1000);
 
-    }, [loading]);
+    }, []);
 
 
 

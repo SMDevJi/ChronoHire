@@ -13,7 +13,7 @@ import Bowser from 'bowser';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
 function detectBrowser() {
-    
+
     try {
         if (window.navigator.brave.isBrave()) {
             return 'Brave'
@@ -37,7 +37,7 @@ function InterViewDetails() {
     const [webcamEnabled, setWebcamEnabled] = useState(false)
     const [browserSupported, setBrowserSupported] = useState(true)
     const { browserSupportsSpeechRecognition } = useSpeechRecognition();
-    
+
     const loadInterview = async () => {
         try {
             setLoading(true)
@@ -69,7 +69,7 @@ function InterViewDetails() {
     useEffect(() => {
         const browser = detectBrowser()
         console.log(browser)
-        
+
         if (!browserSupportsSpeechRecognition || browser.toLocaleLowerCase().includes('brave') || browser.toLocaleLowerCase().includes('firefox')) {
             setBrowserSupported(false)
         } else {
@@ -128,7 +128,14 @@ function InterViewDetails() {
                                 mirrored={true}
                             />
                             <Button className='mt-5 md:mt-15 bg-purple-600 hover:bg-purple-800 w-30 cursor-pointer'
-                                onClick={() => navigate(`/conduct-interview/${interviewId}`)}
+                                onClick={() => {
+                                    if (Number(coinBalance) < interview.cost) {
+                                        toast.error('Not enough balance, Please purchase coins!')
+                                    } else {
+                                        navigate(`/conduct-interview/${interviewId}`)
+                                    }
+                                }
+                                }
                             >
                                 Start Interview
                             </Button>

@@ -109,12 +109,8 @@ export async function extractResumeText(file) {
 
 
 
-// Evaluate answers with AI (mock version)
-/**
- * Evaluate all answers in one API call with structured sub-metrics
- * @param {Array} answeredQuestions - [{ _id, question, suggestedAns, transcript }]
- * @returns {Object} { evaluatedQuestions, overallEvaluation, overallScore }
- */
+// Evaluate answers with AI
+
 export async function evaluateAnswers(answeredQuestions) {
     try {
         const prompt = `

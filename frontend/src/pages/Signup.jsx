@@ -53,14 +53,14 @@ const Signup = () => {
 
     const handleSignUp = (e) => {
         e.preventDefault();
-        if(loading){
+        if (loading) {
             return
         }
         if (password != cPassword) {
             setRegisterErr("Confirm password does not match!")
             return
         }
-        if(!name || !email || !password || !cPassword){
+        if (!name || !email || !password || !cPassword) {
             setRegisterErr("Please fill all the details!")
             return
         }
@@ -115,13 +115,7 @@ const Signup = () => {
                             placeholder="Enter your password"
                             autoComplete="on"
                             value={password}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                if (val.length <= 8) {
-                                    setPassword(e.target.value)
-                                }
-                            }
-                            }
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
@@ -135,12 +129,7 @@ const Signup = () => {
                             placeholder="Confirm your password"
                             autoComplete="on"
                             value={cPassword}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                if (val.length <= 8) {
-                                    setCPassword(e.target.value)
-                                }
-                            }}
+                            onChange={(e) => setCPassword(e.target.value)}
                         />
                     </div>
 
@@ -151,7 +140,7 @@ const Signup = () => {
                         <button
                             className={`w-full px-4 py-2 ${loading ? 'bg-gray-600 hover:bg-gray-600' : 'bg-black hover:bg-gray-800'}  text-white rounded-lg  focus:outline-none`}
                         >
-                            {loading?'Signing up...':'Sign up'}
+                            {loading ? 'Signing up...' : 'Sign up'}
                         </button>
                     </div>
                 </form>

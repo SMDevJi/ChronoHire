@@ -126,7 +126,7 @@ function Purchases() {
               key={index}
               className="w-full card h-full p-6 border border-gray-300 rounded-lg shadow-lg flex flex-col items-center space-y-4  transform transition duration-300 ease-in-out hover:scale-105 hover:shadow-xl hover:border-gray-400"
             >
-              <h3 className="text-xl font-medium text-gray-800">{plan.title}</h3>
+              <h3 className="text-xl font-medium text-gray-800">{plan.name}</h3>
               <p className="text-blue-500 text-lg">Credits: {plan.credits}</p>
               <p className="text-2xl font-semibold text-orange-500">${plan.price}</p>
               <p className="text-gray-600 text-center">{plan.description}</p>
