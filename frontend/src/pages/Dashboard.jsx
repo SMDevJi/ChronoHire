@@ -423,12 +423,12 @@ function Dashboard() {
 
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
+                      <Button variant="outline" className='cursor-pointer'>Cancel</Button>
                     </DialogClose>
                     <Button
                       type="submit"
                       onClick={() => handleReattempt(selectedInterview?.id)}
-                      className={`${creating2 ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} text-white`}
+                      className={`${creating2 ? 'bg-purple-400 hover:bg-purple-400' : 'bg-purple-600 hover:bg-purple-700'} text-white cursor-pointer`}
                     >
                       {creating2 ? <FaSpinner className="animate-spin mr-2" /> : ''}
                       {creating2 ? `Generating Interview... (${timer}s)` : 'Update Interview'}

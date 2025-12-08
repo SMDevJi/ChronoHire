@@ -36,7 +36,7 @@ function Navbar() {
 
     const getLinkClass = (path) => {
         return location.pathname === path
-            ? 'text-purple-600 font-bold ' // Active link style
+            ? 'text-purple-600 font-bold ' 
             : 'hover:text-purple-600'
     }
 

@@ -13,7 +13,7 @@ const router = express.Router();
 
 const INTERVIEW_COST = process.env.INTERVIEW_COST
 
-// Setup multer for file upload
+//Setup multer for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadDir = 'uploads/';
@@ -32,10 +32,10 @@ const upload = multer({ storage: storage });
 
 
 
-/**
- * Create new interview
- * POST /api/interviews/create
- */
+/*
+  Create new interview
+  POST /api/interviews/create
+*/
 router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, res) => {
     try {
         const { role, description, yearsOfExperience, difficulty } = req.body;
@@ -45,17 +45,17 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
 
 
 
-        // 1️⃣ Extract resume
+        //Extract resume
         const resumeText = await extractResumeText(resumeFile.path);
         //console.log(resumeText)
 
 
-        // 2️⃣ Generate 7 AI questions (5 job + 2 resume)
+        //Generate 7 AI questions (5 job + 2 resume)
         const questions = await generateAIQA(role, description, resumeText, difficulty, yearsOfExperience);
 
         //console.log(questions)
 
-        // 3️⃣ Create new interview
+        //Create new interview
         const interview = new Interview({
             userId,
             role,
@@ -104,7 +104,7 @@ router.post("/create", upload.single("resumeFile"), authMiddleware, async (req, 
 
 
 
-// GET all interviews of a user (summary)
+//GET all interviews of a user (summary)
 //api/interviews/get-user
 router.get("/get-user", authMiddleware, async (req, res) => {
     //console.log("first")
@@ -112,7 +112,7 @@ router.get("/get-user", authMiddleware, async (req, res) => {
         //console.log(req.user.id)
         const userId = req.user.id;
 
-        // Fetch only the fields we need
+        //Fetch only the fields we need
         const interviews = await Interview.find({ userId })
             .select("role description createdAt lastAttempt.yearsOfExperience")
             .sort({ createdAt: -1 }); // latest first
@@ -142,10 +142,10 @@ router.get("/get-user", authMiddleware, async (req, res) => {
 
 
 
-/**
- * Submit interview attempt (evaluate answers)
- * POST /api/interviews/submit/:id
- */
+/*
+ Submit interview attempt (evaluate answers)
+ POST /api/interviews/submit/:id
+*/
 router.post("/submit/:id", authMiddleware, async (req, res) => {
 
     try {
@@ -229,10 +229,10 @@ router.post("/submit/:id", authMiddleware, async (req, res) => {
 
 
 
-/**
- * Reattempt interview
- * POST /api/interviews/reattempt/:id
- */
+/*
+ Reattempt interview
+ POST /api/interviews/reattempt/:id
+*/
 router.post("/reattempt/:id", upload.single("resumeFile"), authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;
@@ -326,10 +326,10 @@ router.post("/reattempt/:id", upload.single("resumeFile"), authMiddleware, async
 
 
 
-/**
- * Get interview details
- * GET /api/interviews/:id
- */
+/*
+ Get interview details
+ GET /api/interviews/:id
+*/
 router.get("/:id", authMiddleware, async (req, res) => {
     try {
         const { id } = req.params;

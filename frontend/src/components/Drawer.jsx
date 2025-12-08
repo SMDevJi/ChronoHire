@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DropOn from '../assets/dropdown-on.svg'; // Your SVG icon
+import DropOn from '../assets/dropdown-on.svg';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Drawer({ authorization, handleLogout, decoded, coinBalance }) {
@@ -8,7 +8,7 @@ export default function Drawer({ authorization, handleLogout, decoded, coinBalan
 
     const getLinkClass = (path) => {
         return location.pathname === path
-            ? 'text-purple-600 font-bold ' // Active link style
+            ? 'text-purple-600 font-bold '
             : 'hover:text-purple-600'
     }
 
