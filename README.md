@@ -19,6 +19,10 @@ It also supports **resume-based question generation** and **candidate performanc
 
 ---
 ## ✨ Demo
+- Full Demo video
+
+https://www.youtube.com/watch?v=E0dggUfJ8kY
+
 - Conducting Interview
 
 https://github.com/user-attachments/assets/6b76ed16-f475-467d-b24b-607b72c2198c
